@@ -1,9 +1,9 @@
 package edu.iu.habahram.weathermonitoring.controllers;
 
 import edu.iu.habahram.weathermonitoring.model.CurrentConditionDisplay;
-import edu.iu.habahram.weathermonitoring.model.ForecastDisplay;
-import edu.iu.habahram.weathermonitoring.model.Observer;
+import edu.iu.habahram.weathermonitoring.model.HeatIndexDisplay;
 import edu.iu.habahram.weathermonitoring.model.StatisticsDisplay;
+import edu.iu.habahram.weathermonitoring.model.Observer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,10 +12,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/displays")
 public class DisplayController {
     private CurrentConditionDisplay currentConditionDisplay;
+    private HeatIndexDisplay heatIndexDisplay;
+    private StatisticsDisplay statisticsDisplay;
 
-    public DisplayController(CurrentConditionDisplay currentConditionDisplay
-                             ) {
+    public DisplayController(CurrentConditionDisplay currentConditionDisplay, HeatIndexDisplay heatIndexDisplay, StatisticsDisplay statisticsDisplay) {
         this.currentConditionDisplay = currentConditionDisplay;
+        this.heatIndexDisplay = heatIndexDisplay;
+        this.statisticsDisplay = statisticsDisplay;
     }
 
     @GetMapping
@@ -24,7 +27,9 @@ public class DisplayController {
                 String.format("<h1>Available screens:</h1>");
         html += "<ul>";
         html += "<li>";
-        html += String.format("<a href=/displays/%s>%s</a>", currentConditionDisplay.id(), currentConditionDisplay.name());
+        html += String.format("<a href=/displays/%s>%s</a><br />", currentConditionDisplay.id(), currentConditionDisplay.name());
+        html += String.format("<a href=/displays/%s>%s</a><br />", heatIndexDisplay.id(), heatIndexDisplay.name());
+        html += String.format("<a href=/displays/%s>%s</a>", statisticsDisplay.id(), statisticsDisplay.name());
         html += "</li>";
 
         html += "</ul>";
@@ -42,6 +47,14 @@ public class DisplayController {
             html = currentConditionDisplay.display();
             status = HttpStatus.FOUND;
         }
+        if (id.equalsIgnoreCase(heatIndexDisplay.id())) {
+            html = heatIndexDisplay.display();
+            status = HttpStatus.FOUND;
+        }
+        if (id.equalsIgnoreCase(statisticsDisplay.id())) {
+            html = statisticsDisplay.display();
+            status = HttpStatus.FOUND;
+        }
         return ResponseEntity
                 .status(status)
                 .body(html);
@@ -53,6 +66,16 @@ public class DisplayController {
         HttpStatus status = null;
         if (id.equalsIgnoreCase(currentConditionDisplay.id())) {
             currentConditionDisplay.subscribe();
+            html = "Subscribed!";
+            status = HttpStatus.FOUND;
+        }
+        if (id.equalsIgnoreCase(heatIndexDisplay.id())) {
+            heatIndexDisplay.subscribe();
+            html = "Subscribed!";
+            status = HttpStatus.FOUND;
+        }
+        if (id.equalsIgnoreCase(statisticsDisplay.id())) {
+            statisticsDisplay.subscribe();
             html = "Subscribed!";
             status = HttpStatus.FOUND;
         } else {
@@ -70,6 +93,16 @@ public class DisplayController {
         HttpStatus status = null;
         if (id.equalsIgnoreCase(currentConditionDisplay.id())) {
             currentConditionDisplay.unsubscribe();
+            html = "Unsubscribed!";
+            status = HttpStatus.FOUND;
+        }
+        if (id.equalsIgnoreCase(heatIndexDisplay.id())) {
+            heatIndexDisplay.unsubscribe();
+            html = "Unsubscribed!";
+            status = HttpStatus.FOUND;
+        }
+        if (id.equalsIgnoreCase(statisticsDisplay.id())) {
+            statisticsDisplay.unsubscribe();
             html = "Unsubscribed!";
             status = HttpStatus.FOUND;
         } else {
